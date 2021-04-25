@@ -1,4 +1,3 @@
-import map from 'unist-util-map';
 
 const LINK_REGEX = /^\[\[(.+?)\]\]/;
 
