@@ -1,11 +1,10 @@
-
 const LINK_REGEX = /^\[\[(.+?)\]\]/;
 
 function locator (value, fromIndex) {
   return value.indexOf('[', fromIndex)
 }
 
-function wikiLinkPlugin(opts = {}) {
+export function wikiLinkPlugin(opts = {}) {
   let permalinks = opts.permalinks || [];
   let defaultPageResolver = (name) => [name.replace(/ /g, '_').toLowerCase()];
   let pageResolver = opts.pageResolver || defaultPageResolver
@@ -99,5 +98,3 @@ function wikiLinkPlugin(opts = {}) {
     }
   }
 }
-
-module.exports = wikiLinkPlugin
