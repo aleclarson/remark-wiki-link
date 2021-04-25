@@ -15,6 +15,7 @@
     "email": "me@markhudnall.com",
     "url": "https://markhudnall.com"
   },
+  "types": "index.d.ts",
   "scripts": {
     "test": "npm run babel && mocha --require @babel/register test/index_test.js",
     "babel": "babel src --out-dir lib",
