@@ -1,18 +1,18 @@
 const LINK_REGEX = /^\[\[(.+?)\]\]/;
 
-function locator (value, fromIndex) {
-  return value.indexOf('[', fromIndex)
+function locator(value, fromIndex) {
+  return value.indexOf('[', fromIndex);
 }
 
 export function wikiLinkPlugin(opts = {}) {
   let permalinks = opts.permalinks || [];
   let defaultPageResolver = (name) => [name.replace(/ /g, '_').toLowerCase()];
-  let pageResolver = opts.pageResolver || defaultPageResolver
+  let pageResolver = opts.pageResolver || defaultPageResolver;
   let newClassName = opts.newClassName || 'new';
   let wikiLinkClassName = opts.wikiLinkClassName || 'internal';
-  let defaultHrefTemplate = (permalink) => `#/page/${permalink}`
-  let hrefTemplate = opts.hrefTemplate || defaultHrefTemplate
-  let aliasDivider = opts.aliasDivider || ":";
+  let defaultHrefTemplate = (permalink) => `#/page/${permalink}`;
+  let hrefTemplate = opts.hrefTemplate || defaultHrefTemplate;
+  let aliasDivider = opts.aliasDivider || ':';
 
   function isAlias(pageTitle) {
     return pageTitle.indexOf(aliasDivider) !== -1;
@@ -20,17 +20,17 @@ export function wikiLinkPlugin(opts = {}) {
 
   function parseAliasLink(pageTitle) {
     var [name, displayName] = pageTitle.split(aliasDivider);
-    return { name, displayName }
+    return { name, displayName };
   }
 
   function parsePageTitle(pageTitle) {
     if (isAlias(pageTitle)) {
-      return parseAliasLink(pageTitle)
+      return parseAliasLink(pageTitle);
     }
     return {
       name: pageTitle,
-      displayName: pageTitle
-    }
+      displayName: pageTitle,
+    };
   }
 
   function inlineTokenizer(eat, value) {
@@ -38,10 +38,10 @@ export function wikiLinkPlugin(opts = {}) {
 
     if (match) {
       const pageName = match[1].trim();
-      const { name, displayName } = parsePageTitle(pageName)
+      const { name, displayName } = parsePageTitle(pageName);
 
       let pagePermalinks = pageResolver(name);
-      let permalink = pagePermalinks.find(p => permalinks.indexOf(p) != -1);
+      let permalink = pagePermalinks.find((p) => permalinks.indexOf(p) != -1);
       let exists = permalink != undefined;
 
       if (!exists) {
@@ -63,38 +63,40 @@ export function wikiLinkPlugin(opts = {}) {
           hName: 'a',
           hProperties: {
             className: classNames,
-            href: hrefTemplate(permalink)
+            href: hrefTemplate(permalink),
           },
-          hChildren: [{
-            type: 'text',
-            value: displayName
-          }]
+          hChildren: [
+            {
+              type: 'text',
+              value: displayName,
+            },
+          ],
         },
       });
     }
   }
 
-  inlineTokenizer.locator = locator
+  inlineTokenizer.locator = locator;
 
-  const Parser = this.Parser
+  const Parser = this.Parser;
 
-  const inlineTokenizers = Parser.prototype.inlineTokenizers
-  const inlineMethods = Parser.prototype.inlineMethods
-  inlineTokenizers.wikiLink = inlineTokenizer
-  inlineMethods.splice(inlineMethods.indexOf('link'), 0, 'wikiLink')
+  const inlineTokenizers = Parser.prototype.inlineTokenizers;
+  const inlineMethods = Parser.prototype.inlineMethods;
+  inlineTokenizers.wikiLink = inlineTokenizer;
+  inlineMethods.splice(inlineMethods.indexOf('link'), 0, 'wikiLink');
 
   // Stringify for wiki link
-  const Compiler = this.Compiler
+  const Compiler = this.Compiler;
 
   if (Compiler != null) {
-    const visitors = Compiler.prototype.visitors
+    const visitors = Compiler.prototype.visitors;
     if (visitors) {
       visitors.wikiLink = function (node) {
         if (node.data.alias != node.value) {
-          return `[[${node.value}${aliasDivider}${node.data.alias}]]`
+          return `[[${node.value}${aliasDivider}${node.data.alias}]]`;
         }
-        return `[[${node.value}]]`
-      }
+        return `[[${node.value}]]`;
+      };
     }
   }
 }
