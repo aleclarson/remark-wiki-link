@@ -53,24 +53,23 @@ export function wikiLinkPlugin(opts = {}) {
         classNames += ' ' + newClassName;
       }
 
+      const now = eat.now();
+      now.column += 2;
+
+      const children = this.tokenizeInline(name, now);
+
       return eat(match[0])({
         type: 'wikiLink',
-        value: name,
+        children,
         data: {
           alias: displayName,
-          permalink: permalink,
-          exists: exists,
+          permalink,
+          exists,
           hName: 'a',
           hProperties: {
             className: classNames,
             href: hrefTemplate(permalink),
           },
-          hChildren: [
-            {
-              type: 'text',
-              value: displayName,
-            },
-          ],
         },
       });
     }
